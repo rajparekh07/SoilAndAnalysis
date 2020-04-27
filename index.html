@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Soil and HTML</title>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha256-/ykJw/wDxMa0AQhHDYfuMEwVb4JHMx9h4jD4XvHqVzU=" crossorigin="anonymous" />
+</head>
+<body>
+<br>
+	<div class="container" id="el">
+	  	<div class="jumbotron">
+		  <h1 class="display-4">Soil And Analysis</h1>
+		  <p class="lead">This is a coursework for Internet of Everything Lab.</p>
+		  <hr class="my-4">
+		  <p>Developed interactively by Bhumi Chitroda and Raj Parekh.</p>
+		  <a class="btn btn-primary btn-lg" href="https://github.com/rajparekh07/SoilAndAnalysis" role="button">Learn more about this work.</a>
+
+		  	<hr class="my-4" >
+				<div data-toggle="tooltip" data-placement="top"  title=" value: {{ src1[src1.length-1] }}">
+					<trend
+					    :data="src1"
+					    :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
+					    auto-draw
+					    smooth>
+					</trend>
+					<p class="h4"> Sensor 1 <span class="badge badge-secondary">Latest Reading: {{ src1[src1.length-1] }}</span>  </p> 
+
+			</div>
+			<hr class="my-4" >
+				<div data-toggle="tooltip" data-placement="top" v-tooltip="src2[src1.length-1]" title=" value: {{ src2[src1.length-1] }}">
+					<trend
+					    :data="src2"
+					    :gradient="['#6ff8dc', '#42f983', '#2cfe50']"
+					    auto-draw
+					    smooth>
+					</trend>
+					<p class="h4"> Sensor 2 <span class="badge badge-secondary">Latest Reading: {{ src2[src1.length-1] }}</span>  </p> 
+
+			</div>
+			<hr class="my-4" >
+				<div data-toggle="tooltip" data-placement="top"  title=" value: {{ src3[src1.length-1] }}">
+					<trend
+					    :data="src3"
+					    :gradient="['#6faadc', '#42ba83', '#2c3ea0']"
+					    auto-draw
+					    smooth>
+					</trend>
+					<p class="h4"> Sensor 3 <span class="badge badge-secondary">Latest Reading: {{ src3[src1.length-1] }}</span>  </p> 
+
+			</div>
+			
+		</div>
+	</div>	
+	
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/js/bootstrap.bundle.min.js" integrity="sha256-zxevz2MOFpqKf3D9eeNd/gE0X679Aeg6WRhubeSA9Vc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js" integrity="sha256-ngFW3UnAN0Tnm76mDuu7uUtYEcG3G5H1+zioJw3t+68=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetrend@0.3.4/dist/vue-trend.common.min.js"></script>
+<script src="https://unpkg.com/v-tooltip"></script>
+
+<script>
+	$(document).ready(function () {
+		 $('[data-toggle="tooltip"]').tooltip()
+	})
+	Vue.use(VTooltip)
+	new Vue({
+		el: "#el",
+ 
+		data: {
+			src1: [55, 55],
+			src2: [55, 55],
+			src3: [55, 55],
+			urls: [
+				"http://localhost:8765/s1",
+				"http://localhost:8765/s2",
+				"http://localhost:8765/s3",
+			]
+		},
+		mounted() {
+			// setInterval( () => {
+			// 	axios.all(this.urls.map(x=>axios.get(x))).then(axios.spread((s1,s2,s3) => this.update(s1,s2,s3)))
+			// 	// this.update()
+			// }, 1000)
+
+			setTimeout( () => {
+				setInterval( () => {
+					axios.get(this.urls[0]).then(x=>this.update(x.data, this.src1))
+				}, 3000)
+			}, 10) 
+			setTimeout( () => {
+				setInterval( () => {
+					axios.get(this.urls[1]).then(x=>this.update(x.data, this.src2))
+				}, 3000)
+			}, 1000) 
+			setTimeout( () => {
+				setInterval( () => {
+					axios.get(this.urls[2]).then(x=>this.update(x.data, this.src3))
+				}, 3000)
+			}, 2000) 
+		},
+		methods: {
+			update(s1, arr) {
+				arr.push(s1)
+			},
+			 getRandomArbitrary(min, max) {
+			    return Math.random() * (max - min) + min;
+			}
+		}
+
+	})
+</script>
+</body>
+</html>
